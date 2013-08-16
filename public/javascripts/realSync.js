@@ -41,11 +41,6 @@ define(["jquery", "underscore", "backbone", "io"], function($, _, Backbone, io){
                 cookie = request.cookie;
 
             requestPromise.then(options.success, options.error);
-            requestPromise.then(function(response){
-                model.trigger("sync", model, response, options);
-            }, function(){
-                model.trigger("error", model, requestPromise, options);
-            });
 
             //Make the sync request
             socket.emit(method, cookie, url, data);

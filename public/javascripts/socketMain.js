@@ -1,5 +1,5 @@
-require(["io", "realSync", "backbone"], function(io, realSync, Backbone){
-    var socket = io.connect('http://localhost:3000');
+require(["realSync", "backbone"], function(realSync, Backbone){
+//    var socket = io.connect('http://localhost:3000');
 //    socket.on('pong', function (data) {
 //        console.log("ponged", data);
 //    }).on('ready', function(data){
@@ -14,7 +14,8 @@ require(["io", "realSync", "backbone"], function(io, realSync, Backbone){
         "urlRoot": "test"
     });
 
-    var testModel = new Test();
+    var testModel = new Test(),
+        start = +new Date();
     testModel.save({
         "foo": "bar",
         "obj": {
@@ -28,6 +29,19 @@ require(["io", "realSync", "backbone"], function(io, realSync, Backbone){
             model.save({"foo": "baz"}, {
                 success: function(model, response){
                     console.log("updated", response, model);
+                    var secondCopy = new Test({
+                        _id: model.id
+                    });
+                    secondCopy.fetch({
+                        success: function(model, response){
+                            console.log("fetched", response, model);
+                            model.destroy({
+                                success: function(model){
+                                    console.log("destroyed, " + (new Date() - start), model);
+                                }
+                            });
+                        }
+                    });
                 }
             });
         }
