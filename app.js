@@ -39,6 +39,6 @@ server.listen(app.get('port'), function(){
 });
 
 var io = socketIO.listen(server);
-io.on("connection", indexRoom);
+//io.on("connection", indexRoom);
 io.of("/sync").on("connection", syncRoom);
 

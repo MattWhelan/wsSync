@@ -10,6 +10,8 @@
     "jade": "*",
     "underscore": "~1.5.1",
     "backbone": "~1.0.0",
-    "socket.io": "~0.9.16"
+    "socket.io": "~0.9.16",
+    "mongodb": "~1.3.18",
+    "q": "~0.9.6"
   }
 }
