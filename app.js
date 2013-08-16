@@ -5,6 +5,8 @@
 
 var express = require('express');
 var routes = require('./routes');
+var indexRoom = require('./rooms');
+var syncRoom = require('./rooms/realSync');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
@@ -37,11 +39,6 @@ server.listen(app.get('port'), function(){
 });
 
 var io = socketIO.listen(server);
-io.sockets.on("connection", function(socket){
-  socket.emit("ready", { message: "socket is ready"});
-  socket.on("ping", function(data){
-    console.log("pinged", data);
-    socket.emit("pong", data);
-  });
-});
+io.on("connection", indexRoom);
+io.of("/sync").on("connection", syncRoom);
 

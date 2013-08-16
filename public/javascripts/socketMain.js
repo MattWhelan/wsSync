@@ -1,4 +1,4 @@
-require(["io"], function(io){
+require(["io", "realSync", "backbone"], function(io, realSync, Backbone){
     var socket = io.connect('http://localhost:3000');
     socket.on('pong', function (data) {
         console.log("ponged", data);
@@ -6,8 +6,21 @@ require(["io"], function(io){
         console.log("socket ready", data);
         socket.emit("ping", {foo: "bar"});
     });
-});
 
-require(["jquery", "underscore", "backbone"], function($, _, Backbone){
-});
+    realSync("/sync");
 
+    var testModel = new Backbone.Model(null, {
+        url: "test"
+    });
+    testModel.save({
+        "foo": "bar",
+        "obj": {
+            "fred": "wilma",
+            "barney": "betty"
+        }
+    }, {
+        success: function(model, response){
+            console.log("saved", response);
+        }
+    });
+});
