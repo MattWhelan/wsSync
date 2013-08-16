@@ -3,11 +3,12 @@
 define(["jquery", "underscore", "backbone", "io"], function($, _, Backbone, io){
 
     return function(socketOrUrl){
-        //This manages requests
+        //This manages requests, which are promises
         function RequestManager(){
             var requests = {},
                 seq = 0;
 
+            //Construct a new request and return it
             function makeRequest(){
                 var cookie = "request_" + (seq++),
                     request = new $.Deferred();
@@ -16,10 +17,12 @@ define(["jquery", "underscore", "backbone", "io"], function($, _, Backbone, io){
                 return request;
             }
 
+            //Get a request by cookie
             function getRequest(cookie){
                 return requests[cookie];
             }
 
+            //Remove a request by cookie, so they don't just stick around eating memory
             function removeRequest(cookie){
                 delete requests[cookie];
             }
@@ -32,7 +35,7 @@ define(["jquery", "underscore", "backbone", "io"], function($, _, Backbone, io){
         //This is the new Backbone.sync implementation
         function realSync(method, model, options){
             //Parse params
-            var url = options.url || _.result(model, "url");
+            var url = options.url || _.result(model, "url"); //url is used to indicate type and ID, nothing more.
             var data = options.data || options.attrs || model.toJSON(options);
 
             //set up the request promise and tracking cookie
@@ -71,6 +74,12 @@ define(["jquery", "underscore", "backbone", "io"], function($, _, Backbone, io){
         });
 
         realSync.origSync = Backbone.sync;
+        //Undo will restore the original sync method.
+        realSync.undo = function(){
+            this.sync = this.origSync;
+            delete this.origSync;
+        };
+        //Install the realSync implementation
         Backbone.sync = realSync;
     };
 });

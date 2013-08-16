@@ -22,6 +22,7 @@ var db = q.ninvoke(mongoClient, "open").then(function(mongoClient){
     process.exit(1);
 });
 
+//TODO: find a way to separate the DB stuff from the Socket stuff, so we can drop in different DB backends.
 module.exports = exports = function(socket){
     socket.on("create", function(cookie, url, data){
         db.then(function(db){
